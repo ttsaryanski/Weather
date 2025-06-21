@@ -10,7 +10,7 @@ A simple weather forecast application built with **React**, providing current we
 
 ## ✨ Features
 
--   🌤️ Current weather by location (using Geolocation API)
+-   🌤️ Current weather and air pollution by location (using Geolocation API)
 -   📅 5-day forecast
 -   🔍 City-based search (supports both Latin and Cyrillic input)
 -   🌡️ Units toggle (Celsius / Fahrenheit)
