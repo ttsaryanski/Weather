@@ -8,5 +8,5 @@ export function extractFiveDays(forecastList) {
         }
     });
 
-    return Object.values(dailyMap).slice(0, 5);
+    return Object.values(dailyMap).slice(0, 4);
 }

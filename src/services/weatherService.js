@@ -27,9 +27,23 @@ async function getWeatherByCityForFiveDays(city, units, lang) {
     return response.data;
 }
 
+async function getCurrentAirPollutionByCoords(lat, lon) {
+    const url = `${BASE_URL}/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+    const response = await axios.get(url);
+    return response.data;
+}
+
+async function getForecastAirPollutionByCoords(lat, lon) {
+    const url = `${BASE_URL}/air_pollution/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+    const response = await axios.get(url);
+    return response.data;
+}
+
 export const weatherService = {
     getWeatherByCoords,
     getWeatherByCity,
     getWeatherByCoordsForFiveDays,
     getWeatherByCityForFiveDays,
+    getCurrentAirPollutionByCoords,
+    getForecastAirPollutionByCoords,
 };

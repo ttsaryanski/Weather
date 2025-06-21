@@ -1,3 +1,7 @@
+import { Link } from "react-router";
+
+import { useReqData } from "../contexts/ReqDataContext";
+
 export default function Search({
     currentCityName,
     onChange,
@@ -7,10 +11,12 @@ export default function Search({
     searchCity,
     errors,
     changeUnits,
-    units,
     changeLang,
-    lang,
 }) {
+    const { reqData } = useReqData();
+    const units = reqData.units;
+    const lang = reqData.lang;
+
     return (
         <section className="container">
             <div className="row">
@@ -49,12 +55,14 @@ export default function Search({
                         Search
                     </button>
                 </form>
-                <h1
+                <Link
                     className="col d-flex justify-content-center align-items-center city-title"
+                    style={{ color: "#444e54" }}
                     id="searched-city"
+                    to="/"
                 >
                     {currentCityName}
-                </h1>
+                </Link>
             </div>
             <span className="measurements">
                 <button

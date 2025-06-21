@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+import { useReqData } from "../contexts/ReqDataContext";
 import { useError } from "../contexts/ErrorContext";
 
 import { weatherService } from "../services/weatherService";
@@ -11,126 +12,87 @@ import Spinner from "./spinner/Spinner";
 import Search from "./Search";
 
 export default function Weather() {
+    const { reqData, saveCoords, editLang, editUnits, saveTimeZone, editCity } =
+        useReqData();
     const { setError } = useError();
 
     const [weather, setWeather] = useState(null);
     const [fiveDaysWeather, setFiveDaysWeather] = useState([]);
-    const [timeZone, setTimeZone] = useState(null);
-    const [searchCity, setSearchSity] = useState("");
+    const [searchCity, setSearchCity] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [pending, setPending] = useState(false);
-    const [currentCity, setCurrentCity] = useState("");
-    const [units, setUnits] = useState("metric");
-    const [lang, setLang] = useState("bg");
     const [errors, setErrors] = useState({ search: "" });
 
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                try {
-                    const { latitude, longitude } = position.coords;
-                    const [data, fiveDaysData] = await Promise.all([
-                        weatherService.getWeatherByCoords(
-                            latitude,
-                            longitude,
-                            units,
-                            lang
-                        ),
-                        weatherService.getWeatherByCoordsForFiveDays(
-                            latitude,
-                            longitude,
-                            units,
-                            lang
-                        ),
-                    ]);
-                    setWeather(data);
-                    setFiveDaysWeather(fiveDaysData.list);
-                    setTimeZone(fiveDaysData.city.timezone);
-                    setCurrentCity(data.name);
-                } catch {
-                    setError("Error loading time by coordinates.");
-                } finally {
-                    setIsLoading(false);
-                }
-            },
-            async () => {
-                try {
-                    const [data, fiveDaysData] = await Promise.all([
-                        weatherService.getWeatherByCity("Gabrovo", units, lang),
-                        weatherService.getWeatherByCityForFiveDays(
-                            "Gabrovo",
-                            units,
-                            lang
-                        ),
-                    ]);
-                    setWeather(data);
-                    setFiveDaysWeather(fiveDaysData.list);
-                    setTimeZone(fiveDaysData.city.timezone);
-                    setCurrentCity(data.name);
-                } catch {
-                    setError("Error loading weather for Gabrovo.");
-                } finally {
-                    setIsLoading(false);
-                }
-            }
-        );
-    }, [setError]);
+    const fetchWeatherData = async (city, lat, lon, useCoords = false) => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const [data, fiveDaysData] = await Promise.all([
+                useCoords
+                    ? weatherService.getWeatherByCoords(
+                          lat,
+                          lon,
+                          reqData.units,
+                          reqData.lang
+                      )
+                    : weatherService.getWeatherByCity(
+                          city,
+                          reqData.units,
+                          reqData.lang
+                      ),
+                useCoords
+                    ? weatherService.getWeatherByCoordsForFiveDays(
+                          lat,
+                          lon,
+                          reqData.units,
+                          reqData.lang
+                      )
+                    : weatherService.getWeatherByCityForFiveDays(
+                          city,
+                          reqData.units,
+                          reqData.lang
+                      ),
+            ]);
+
+            setWeather(data);
+            setFiveDaysWeather(fiveDaysData.list);
+            saveCoords(data.coord.lat, data.coord.lon);
+            saveTimeZone(fiveDaysData.city.timezone);
+            editCity(data.name);
+        } catch (error) {
+            setError(`Error loading weather for ${city || "coordinates"}.`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
-        if (!weather?.name) return;
-
-        const fetchCity = async () => {
-            setError(null);
-            setIsLoading(true);
-            try {
-                const [data, fiveDaysData] = await Promise.all([
-                    weatherService.getWeatherByCity(currentCity, units, lang),
-                    weatherService.getWeatherByCityForFiveDays(
-                        currentCity,
-                        units,
-                        lang
-                    ),
-                ]);
-
-                setWeather(data);
-                setFiveDaysWeather(fiveDaysData.list);
-                setTimeZone(fiveDaysData.city.timezone);
-                setCurrentCity(data.name);
-            } catch (error) {
-                setError("Error updating units.");
-            } finally {
-                setIsLoading(false);
+        const loadInitialData = async () => {
+            if (reqData.city === "") {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        await fetchWeatherData(null, latitude, longitude, true);
+                    },
+                    async () => {
+                        await fetchWeatherData("");
+                    }
+                );
+            } else {
+                await fetchWeatherData(reqData.city);
             }
         };
-        fetchCity();
-    }, [units, lang, setError]);
+
+        loadInitialData();
+    }, [reqData.units, reqData.lang]);
 
     const searchCityHandler = async (e) => {
         e.preventDefault();
 
         setPending(true);
-        setError(null);
-        try {
-            const [data, fiveDaysData] = await Promise.all([
-                weatherService.getWeatherByCity(searchCity, units, lang),
-                weatherService.getWeatherByCityForFiveDays(
-                    searchCity,
-                    units,
-                    lang
-                ),
-            ]);
-
-            setWeather(data);
-            setFiveDaysWeather(fiveDaysData.list);
-            setTimeZone(fiveDaysData.city.timezone);
-            setCurrentCity(data.name);
-            setSearchSity("");
-            setIsLoading(false);
-        } catch (error) {
-            setError("Error loading weather for the searched city.");
-        } finally {
-            setPending(false);
-        }
+        await fetchWeatherData(searchCity);
+        setSearchCity("");
+        setPending(false);
     };
 
     const validateSearch = (value) => {
@@ -147,16 +109,16 @@ export default function Weather() {
 
     const searchChangeHandler = (e) => {
         const value = e.target.value;
-        setSearchSity(value);
+        setSearchCity(value);
         setErrors({ search: validateSearch(value) });
     };
 
     const changeUnitsHandler = (e) => {
-        setUnits(e);
+        editUnits(e);
     };
 
     const changeLangHandler = (e) => {
-        setLang(e);
+        editLang(e);
     };
 
     const isFormValid = !errors.search && searchCity;
@@ -166,7 +128,7 @@ export default function Weather() {
             <ErrorMsg />
 
             <Search
-                currentCityName={currentCity}
+                currentCityName={reqData.city}
                 onSearch={searchCityHandler}
                 onChange={searchChangeHandler}
                 pending={pending}
@@ -174,9 +136,7 @@ export default function Weather() {
                 errors={errors}
                 searchCity={searchCity}
                 changeUnits={changeUnitsHandler}
-                units={units}
                 changeLang={changeLangHandler}
-                lang={lang}
             />
 
             {isLoading && (
@@ -192,15 +152,11 @@ export default function Weather() {
                 </div>
             )}
 
-            {weather && (
+            {weather && !isLoading && (
                 <>
-                    <CurrentDay weather={weather} units={units} lang={lang} />
+                    <CurrentDay weather={weather} />
 
-                    <FiveDay
-                        data={fiveDaysWeather}
-                        lang={lang}
-                        timezone={timeZone}
-                    />
+                    <FiveDay data={fiveDaysWeather} />
                 </>
             )}
         </>

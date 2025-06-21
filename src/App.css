@@ -69,6 +69,8 @@ button:hover {
 
 .todays-info {
   margin: 15px 0;
+  flex-basis: content;
+  flex-grow: 0;
 }
 
 .side-info {
@@ -123,4 +125,36 @@ a {
 
 a:hover {
   color: #007bff;
+  text-decoration: none;
+}
+
+#img {
+  display: flex;
+}
+
+@media (max-width: 1000px) {
+  h1 {
+    font-size: 70px !important;
+  }
+}
+
+@media (max-width: 800px) {
+  #img {
+    flex-direction: column;
+    margin: 0 10px;
+  }
+
+  .side-info {
+    margin-left: 0 !important;
+    left: 0
+  }
+
+  #weather-type {
+    margin: 0 20px;
+  }
+
+  .row {
+    justify-content: center ;
+    align-items: center ;
+  }
 }
