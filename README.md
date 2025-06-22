@@ -10,23 +10,31 @@ A simple weather forecast application built with **React**, providing current we
 
 ## ✨ Features
 
--   🌤️ Current weather and air pollution by location (using Geolocation API)
--   📅 5-day forecast
--   🔍 City-based search (supports both Latin and Cyrillic input)
--   🌡️ Units toggle (Celsius / Fahrenheit)
--   🌐 Language toggle (English / Bulgarian)
--   🧠 Validation for city input
--   🔁 Loading indicators and error handling
--   📱 Responsive design
+-   📍 Auto-detects user location using the Geolocation API.
+-   🔍 Search for weather by city.
+-   ☀️ Displays current weather, daily forecast, and detailed view.
+-   🌀 Shows Air Quality Index (AQI) data.
+-   🌍 Supports both **English** and **Bulgarian** languages.
+-   🌡️ Toggle between **Metric** and **Imperial** units.
+-   🧠 **Global App Context** (`ReqDataContext`) manages:
+    -   selected **city**
+    -   preferred **language**
+    -   chosen **units**
+-   💾 **Preferences are saved in `localStorage`**:
+    -   Automatically restored on app load or page refresh.
+    -   Preserves selected settings when navigating back from the details view.
 
 ---
 
 ## ⚙️ Technologies
 
 -   **React 19** + Vite
--   **Context API** (for error handling)
+-   **Context API**
 -   **Firebase Hosting**
 -   **OpenWeatherMap API**
+    -   Current Weather
+    -   5-Day / 3-Hour Forecast
+    -   Air Pollution
 
 ---
 
