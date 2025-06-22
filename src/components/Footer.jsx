@@ -4,14 +4,16 @@ export default function Footer() {
             <p style={{ marginBottom: "0" }}>
                 Designed by
                 <a href="https://github.com/Tumekab" target="_blank">
-                    {""}Tumeka
+                    {" "}
+                    Tumeka
                 </a>
                 <span>✌🏼</span>
             </p>
             <p>
                 Coded by
                 <a href="https://github.com/ttsaryanski" target="_blank">
-                    {""}Tsvetan Tsaryanski
+                    {" "}
+                    Tsvetan Tsaryanski
                 </a>
                 <span>🤟</span>
             </p>
