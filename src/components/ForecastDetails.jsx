@@ -30,8 +30,6 @@ export default function CurrentDayDetails() {
     const subTitle = isBG ? "Качество на въздуха: " : "Air Quality: ";
     const humidity = isBG ? "Влажност" : "Humidity";
     const wind = isBG ? "Вятър" : "Wind";
-    const sunrise = isBG ? "Изгрев" : "Sunrise";
-    const sunset = isBG ? "Залез" : "Sunset";
     const visibility = isBG ? "Видимост" : "Visibility";
     const distance = isBG ? "метра" : "meters";
     const pressure = isBG ? "Налягане" : "Pressure";

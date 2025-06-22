@@ -12,8 +12,15 @@ import Spinner from "./spinner/Spinner";
 import Search from "./Search";
 
 export default function Weather() {
-    const { reqData, saveCoords, editLang, editUnits, saveTimeZone, editCity } =
-        useReqData();
+    const {
+        reqData,
+        saveCoords,
+        editLang,
+        editUnits,
+        saveTimeZone,
+        editCity,
+        resetAll,
+    } = useReqData();
     const { setError } = useError();
 
     const [weather, setWeather] = useState(null);
@@ -68,14 +75,14 @@ export default function Weather() {
 
     useEffect(() => {
         const loadInitialData = async () => {
-            if (reqData.city === "") {
+            if (!reqData.coords?.lat || !reqData.coords?.lon) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         const { latitude, longitude } = position.coords;
                         await fetchWeatherData(null, latitude, longitude, true);
                     },
                     async () => {
-                        await fetchWeatherData("");
+                        await fetchWeatherData("Габрово");
                     }
                 );
             } else {

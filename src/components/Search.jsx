@@ -13,12 +13,27 @@ export default function Search({
     changeUnits,
     changeLang,
 }) {
-    const { reqData } = useReqData();
-    const units = reqData.units;
-    const lang = reqData.lang;
+    const { reqData, resetAll } = useReqData();
+    const isBG = reqData.lang === "bg";
+    const reset = isBG ? "Нулиране на настройките" : "Reset Settings";
+
+    const handleReset = () => {
+        resetAll();
+        window.location.reload();
+    };
 
     return (
         <section className="container">
+            <div>
+                <button
+                    style={{ display: "block" }}
+                    className="button"
+                    onClick={handleReset}
+                >
+                    {reset}
+                </button>
+            </div>
+
             <div className="row">
                 <form onSubmit={onSearch} className="col" id="search-form">
                     <input
@@ -68,8 +83,8 @@ export default function Search({
                 <button
                     onClick={() => changeUnits("metric")}
                     id="celcius-link"
-                    disabled={units === "metric"}
-                    className={units === "metric" ? "notactive" : ""}
+                    disabled={reqData.units === "metric"}
+                    className={reqData.units === "metric" ? "notactive" : ""}
                 >
                     C°
                 </button>{" "}
@@ -78,8 +93,8 @@ export default function Search({
                     onClick={() => changeUnits("imperial")}
                     id="fahrenheit-link"
                     style={{ marginLeft: "5px" }}
-                    disabled={units === "imperial"}
-                    className={units === "imperial" ? "notactive" : ""}
+                    disabled={reqData.units === "imperial"}
+                    className={reqData.units === "imperial" ? "notactive" : ""}
                 >
                     F°
                 </button>
@@ -89,8 +104,8 @@ export default function Search({
                 <button
                     onClick={() => changeLang("bg")}
                     id="celcius-link"
-                    disabled={lang === "bg"}
-                    className={lang === "bg" ? "notactive" : ""}
+                    disabled={reqData.lang === "bg"}
+                    className={reqData.lang === "bg" ? "notactive" : ""}
                 >
                     bg
                 </button>{" "}
@@ -99,8 +114,8 @@ export default function Search({
                     onClick={() => changeLang("en")}
                     id="fahrenheit-link"
                     style={{ marginLeft: "5px" }}
-                    disabled={lang === "en"}
-                    className={lang === "en" ? "notactive" : ""}
+                    disabled={reqData.lang === "en"}
+                    className={reqData.lang === "en" ? "notactive" : ""}
                 >
                     en
                 </button>

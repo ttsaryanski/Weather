@@ -23,6 +23,8 @@ A simple weather forecast application built with **React**, providing current we
 -   💾 **Preferences are saved in `localStorage`**:
     -   Automatically restored on app load or page refresh.
     -   Preserves selected settings when navigating back from the details view.
+-   🗑️ **Clear `localStorage`**:
+    -   Reset setings in localStorage.
 
 ---
 
